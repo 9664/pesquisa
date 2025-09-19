@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisa de Satisfação - Tiãozinho Supermercados</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .required {
+            color: #f5576c;
+        }
+
+        .nps-scale {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+            margin: 20px 0;
+        }
+
+        .nps-button {
+            flex: 1;
+            padding: 15px 5px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .nps-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .nps-button.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .nps-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .radio-item:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .radio-item input[type="radio"] {
+            display: none;
+        }
+
+        .radio-item.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .radio-item label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .rating-scale {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .rating-button {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .rating-button:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+
+        .rating-button.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .rating-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .input-group input[type="text"],
+        .input-group input[type="email"],
+        .input-group input[type="tel"],
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .checkbox-item:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            user-select: none;
+            flex: 1;
+        }
+
+        .checkbox-item.checked {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-color: #667eea;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: #4caf50;
+            margin-bottom: 20px;
+        }
+
+        .success-text {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .success-subtext {
+            font-size: 16px;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .nps-scale {
+                flex-wrap: wrap;
+            }
+            
+            .nps-button {
+                min-width: 45px;
+            }
+
+            .rating-button {
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+        }
+
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="/assets/logo-tiaozinho.png" alt="Tiãozinho Supermercados" class="logo">
+            <h1>Pesquisa de Satisfação</h1>
+            <p class="subtitle">Sua opinião é muito importante para nós!</p>
+        </div>
+
+        <div class="form-container" id="formContainer">
+            <form id="pesquisaForm">
+                <!-- Dados do Cliente -->
+                <div class="question-block">
+                    <h2 class="question-title">Dados Pessoais</h2>
+                    
+                    <div class="input-group">
+                        <label for="nome">Nome Completo <span class="required">*</span></label>
+                        <input type="text" id="nome" name="nome" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="email">E-mail <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="telefone">WhatsApp</label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999">
+                    </div>
+                </div>
+
+                <!-- Qual Loja -->
+                <div class="question-block">
+                    <h2 class="question-title">Em qual loja você costuma comprar? <span class="required">*</span></h2>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="loja1" name="loja_preferida" value="loja_1" required>
+                            <label for="loja1">Loja 1</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="loja2" name="loja_preferida" value="loja_2">
+                            <label for="loja2">Loja 2</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="loja3" name="loja_preferida" value="loja_3">
+                            <label for="loja3">Loja 3</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="loja4" name="loja_preferida" value="loja_4">
+                            <label for="loja4">Loja 4</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="loja5" name="loja_preferida" value="loja_5">
+                            <label for="loja5">Loja 5</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="loja6" name="loja_preferida" value="loja_6">
+                            <label for="loja6">Loja 6</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="loja7" name="loja_preferida" value="loja_7">
+                            <label for="loja7">Loja 7</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="loja8" name="loja_preferida" value="loja_8">
+                            <label for="loja8">Loja 8</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="loja_online" name="loja_preferida" value="online">
+                            <label for="loja_online">Online</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canais de Comunicação -->
+                <div class="question-block">
+                    <h2 class="question-title">Por onde você fica sabendo das promoções do Tiãozinho Supermercados? <span class="required">*</span></h2>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Marque todas as opções que se aplicam</p>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="canal_instagram" name="canais_promocao[]" value="instagram">
+                            <label for="canal_instagram">Instagram</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="canal_facebook" name="canais_promocao[]" value="facebook">
+                            <label for="canal_facebook">Facebook</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="canal_radio" name="canais_promocao[]" value="radio">
+                            <label for="canal_radio">Rádio</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="canal_whatsapp" name="canais_promocao[]" value="whatsapp">
+                            <label for="canal_whatsapp">Ofertas de WhatsApp</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="canal_carro_som" name="canais_promocao[]" value="carro_som">
+                            <label for="canal_carro_som">Carro de Som</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="canal_outros" name="canais_promocao[]" value="outros">
+                            <label for="canal_outros">Outros</label>
+                        </div>
+                    </div>
+                    <div class="input-group" id="outrosCanaisGroup" style="display:none; margin-top:15px;">
+                        <label for="outros_canais_especificar">Especifique outros canais:</label>
+                        <input type="text" id="outros_canais_especificar" name="outros_canais_especificar" placeholder="Digite aqui...">
+                    </div>
+                </div>
+
+                <!-- NPS -->
+                <div class="question-block">
+                    <h2 class="question-title">De 0 a 10, o quanto você indicaria o Tiãozinho Supermercados a um amigo? <span class="required">*</span></h2>
+                    <div class="nps-scale">
+                        <button type="button" class="nps-button" data-value="0">0</button>
+                        <button type="button" class="nps-button" data-value="1">1</button>
+                        <button type="button" class="nps-button" data-value="2">2</button>
+                        <button type="button" class="nps-button" data-value="3">3</button>
+                        <button type="button" class="nps-button" data-value="4">4</button>
+                        <button type="button" class="nps-button" data-value="5">5</button>
+                        <button type="button" class="nps-button" data-value="6">6</button>
+                        <button type="button" class="nps-button" data-value="7">7</button>
+                        <button type="button" class="nps-button" data-value="8">8</button>
+                        <button type="button" class="nps-button" data-value="9">9</button>
+                        <button type="button" class="nps-button" data-value="10">10</button>
+                    </div>
+                    <div class="nps-labels">
+                        <span>Nunca indicaria</span>
+                        <span>Com certeza indicaria</span>
+                    </div>
+                    <input type="hidden" id="nps" name="nps" required>
+                </div>
+
+                <!-- Motivo da Visita -->
+                <div class="question-block">
+                    <h2 class="question-title">Qual o principal motivo da sua visita hoje? <span class="required">*</span></h2>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="motivo1" name="motivo_visita" value="compra_mes">
+                            <label for="motivo1">Compra do mês</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo2" name="motivo_visita" value="reposicao">
+                            <label for="motivo2">Reposição rápida</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo3" name="motivo_visita" value="ofertas">
+                            <label for="motivo3">Ofertas</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo4" name="motivo_visita" value="frescos">
+                            <label for="motivo4">Produtos frescos</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo5" name="motivo_visita" value="outros">
+                            <label for="motivo5">Outros</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Encontrou tudo -->
+                <div class="question-block">
+                    <h2 class="question-title">Encontrou tudo o que procurava? <span class="required">*</span></h2>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="encontrou_sim" name="encontrou_tudo" value="sim">
+                            <label for="encontrou_sim">Sim</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="encontrou_nao" name="encontrou_tudo" value="nao">
+                            <label for="encontrou_nao">Não</label>
+                        </div>
+                    </div>
+                    <div class="input-group" id="faltouGroup" style="display:none; margin-top:15px;">
+                        <label for="o_que_faltou">O que faltou?</label>
+                        <input type="text" id="o_que_faltou" name="o_que_faltou">
+                    </div>
+                </div>
+
+                <!-- Avaliações -->
+                <div class="question-block">
+                    <h2 class="question-title">Avalie os seguintes aspectos:</h2>
+
+                    <!-- Preço -->
+                    <div style="margin-bottom: 25px;">
+                        <p style="margin-bottom: 10px; font-weight: 500;">Preço em relação aos concorrentes <span class="required">*</span></p>
+                        <div class="rating-scale">
+                            <button type="button" class="rating-button" data-category="preco" data-value="1">1</button>
+                            <button type="button" class="rating-button" data-category="preco" data-value="2">2</button>
+                            <button type="button" class="rating-button" data-category="preco" data-value="3">3</button>
+                            <button type="button" class="rating-button" data-category="preco" data-value="4">4</button>
+                            <button type="button" class="rating-button" data-category="preco" data-value="5">5</button>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Muito caro</span>
+                            <span>Muito barato</span>
+                        </div>
+                        <input type="hidden" id="avaliacao_preco" name="avaliacao_preco" required>
+                    </div>
+
+                    <!-- Fila -->
+                    <div style="margin-bottom: 25px;">
+                        <p style="margin-bottom: 10px; font-weight: 500;">Tempo de espera na fila <span class="required">*</span></p>
+                        <div class="rating-scale">
+                            <button type="button" class="rating-button" data-category="fila" data-value="1">1</button>
+                            <button type="button" class="rating-button" data-category="fila" data-value="2">2</button>
+                            <button type="button" class="rating-button" data-category="fila" data-value="3">3</button>
+                            <button type="button" class="rating-button" data-category="fila" data-value="4">4</button>
+                            <button type="button" class="rating-button" data-category="fila" data-value="5">5</button>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Muito demorado</span>
+                            <span>Muito rápido</span>
+                        </div>
+                        <input type="hidden" id="avaliacao_fila" name="avaliacao_fila" required>
+                    </div>
+
+                    <!-- Qualidade Produtos -->
+                    <div style="margin-bottom: 25px;">
+                        <p style="margin-bottom: 10px; font-weight: 500;">Qualidade dos produtos (Padaria, Hortifruti, Açougue) <span class="required">*</span></p>
+                        <div class="rating-scale">
+                            <button type="button" class="rating-button" data-category="qualidade" data-value="1">1</button>
+                            <button type="button" class="rating-button" data-category="qualidade" data-value="2">2</button>
+                            <button type="button" class="rating-button" data-category="qualidade" data-value="3">3</button>
+                            <button type="button" class="rating-button" data-category="qualidade" data-value="4">4</button>
+                            <button type="button" class="rating-button" data-category="qualidade" data-value="5">5</button>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Péssima</span>
+                            <span>Excelente</span>
+                        </div>
+                        <input type="hidden" id="avaliacao_qualidade" name="avaliacao_qualidade" required>
+                    </div>
+
+                    <!-- Limpeza -->
+                    <div style="margin-bottom: 25px;">
+                        <p style="margin-bottom: 10px; font-weight: 500;">Limpeza e sinalização da loja <span class="required">*</span></p>
+                        <div class="rating-scale">
+                            <button type="button" class="rating-button" data-category="limpeza" data-value="1">1</button>
+                            <button type="button" class="rating-button" data-category="limpeza" data-value="2">2</button>
+                            <button type="button" class="rating-button" data-category="limpeza" data-value="3">3</button>
+                            <button type="button" class="rating-button" data-category="limpeza" data-value="4">4</button>
+                            <button type="button" class="rating-button" data-category="limpeza" data-value="5">5</button>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Péssima</span>
+                            <span>Excelente</span>
+                        </div>
+                        <input type="hidden" id="avaliacao_limpeza" name="avaliacao_limpeza" required>
+                    </div>
+
+                    <!-- Atendimento -->
+                    <div style="margin-bottom: 25px;">
+                        <p style="margin-bottom: 10px; font-weight: 500;">Atendimento dos colaboradores <span class="required">*</span></p>
+                        <div class="rating-scale">
+                            <button type="button" class="rating-button" data-category="atendimento" data-value="1">1</button>
+                            <button type="button" class="rating-button" data-category="atendimento" data-value="2">2</button>
+                            <button type="button" class="rating-button" data-category="atendimento" data-value="3">3</button>
+                            <button type="button" class="rating-button" data-category="atendimento" data-value="4">4</button>
+                            <button type="button" class="rating-button" data-category="atendimento" data-value="5">5</button>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Péssimo</span>
+                            <span>Excelente</span>
+                        </div>
+                        <input type="hidden" id="avaliacao_atendimento" name="avaliacao_atendimento" required>
+                    </div>
+
+                    <!-- Satisfação Geral -->
+                    <div style="margin-bottom: 25px;">
+                        <p style="margin-bottom: 10px; font-weight: 500;">Satisfação com a visita de hoje <span class="required">*</span></p>
+                        <div class="rating-scale">
+                            <button type="button" class="rating-button" data-category="satisfacao" data-value="1">1</button>
+                            <button type="button" class="rating-button" data-category="satisfacao" data-value="2">2</button>
+                            <button type="button" class="rating-button" data-category="satisfacao" data-value="3">3</button>
+                            <button type="button" class="rating-button" data-category="satisfacao" data-value="4">4</button>
+                            <button type="button" class="rating-button" data-category="satisfacao" data-value="5">5</button>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Muito insatisfeito</span>
+                            <span>Muito satisfeito</span>
+                        </div>
+                        <input type="hidden" id="avaliacao_satisfacao" name="avaliacao_satisfacao" required>
+                    </div>
+                </div>
+
+                <!-- Pergunta Aberta -->
+                <div class="question-block">
+                    <h2 class="question-title">O que faria você voltar amanhã?</h2>
+                    <textarea name="voltar_amanha" id="voltar_amanha" placeholder="Compartilhe sua opinião..."></textarea>
+                </div>
+
+                <!-- WhatsApp Ofertas -->
+                <div class="question-block">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="receber_ofertas" name="receber_ofertas" value="sim">
+                        <label for="receber_ofertas">Desejo receber as melhores ofertas no WhatsApp</label>
+                    </div>
+                </div>
+
+                <!-- LGPD -->
+                <div class="question-block">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="aceite_lgpd" name="aceite_lgpd" value="sim" required>
+                        <label for="aceite_lgpd">Li e concordo com a <a href="/politica-privacidade" target="_blank" style="color: #667eea; text-decoration: underline;">Política de Privacidade</a> e tratamento de dados conforme a LGPD <span class="required">*</span></label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">Enviar Pesquisa</button>
+                <div class="spinner" id="loadingSpinner"></div>
+            </form>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">✓</div>
+            <div class="success-text">Obrigado pela sua participação!</div>
+            <div class="success-subtext">Sua opinião é muito importante para melhorarmos nossos serviços.</div>
+        </div>
+    </div>
+
+    <script>
+        // NPS Selection
+        const npsButtons = document.querySelectorAll('.nps-button');
+        const npsInput = document.getElementById('nps');
+
+        npsButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                npsButtons.forEach(b => b.classList.remove('selected'));
+                button.classList.add('selected');
+                npsInput.value = button.dataset.value;
+            });
+        });
+
+        // Radio Items Selection
+        const radioItems = document.querySelectorAll('.radio-item');
+        
+        radioItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const radio = item.querySelector('input[type="radio"]');
+                const groupName = radio.name;
+                
+                // Remove selected from same group
+                document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+                    r.closest('.radio-item').classList.remove('selected');
+                });
+                
+                radio.checked = true;
+                item.classList.add('selected');
+
+                // Show/hide "O que faltou" field
+                if (groupName === 'encontrou_tudo') {
+                    const faltouGroup = document.getElementById('faltouGroup');
+                    if (radio.value === 'nao') {
+                        faltouGroup.style.display = 'block';
+                    } else {
+                        faltouGroup.style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        // Checkbox Items Selection
+        const checkboxItems = document.querySelectorAll('.checkbox-item');
+        
+        checkboxItems.forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            
+            // Click on the entire item
+            item.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'INPUT') {
+                    checkbox.checked = !checkbox.checked;
+                    checkbox.dispatchEvent(new Event('change'));
+                }
+            });
+            
+            // Handle checkbox change
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    item.classList.add('checked');
+                } else {
+                    item.classList.remove('checked');
+                }
+                
+                // Show/hide "Outros" field
+                if (checkbox.id === 'canal_outros') {
+                    const outrosGroup = document.getElementById('outrosCanaisGroup');
+                    if (checkbox.checked) {
+                        outrosGroup.style.display = 'block';
+                    } else {
+                        outrosGroup.style.display = 'none';
+                        document.getElementById('outros_canais_especificar').value = '';
+                    }
+                }
+            });
+        });
+
+        // Rating Buttons
+        const ratingButtons = document.querySelectorAll('.rating-button');
+
+        ratingButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const category = button.dataset.category;
+                const value = button.dataset.value;
+                
+                // Remove selected from same category
+                document.querySelectorAll(`.rating-button[data-category="${category}"]`).forEach(b => {
+                    b.classList.remove('selected');
+                });
+                
+                button.classList.add('selected');
+                document.getElementById(`avaliacao_${category}`).value = value;
+            });
+        });
+
+        // Phone mask
+        const phoneInput = document.getElementById('telefone');
+        phoneInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 11) {
+                    value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+                }
+            }
+            e.target.value = value;
+        });
+
+        // Form validation
+        function validateCheckboxGroup() {
+            const checkboxes = document.querySelectorAll('input[name="canais_promocao[]"]');
+            const atLeastOneChecked = Array.from(checkboxes).some(cb => cb.checked);
+            
+            if (!atLeastOneChecked) {
+                alert('Por favor, selecione pelo menos um canal de comunicação.');
+                return false;
+            }
+            
+            // If "Outros" is checked, ensure the text field is filled
+            const outrosCheckbox = document.getElementById('canal_outros');
+            const outrosText = document.getElementById('outros_canais_especificar');
+            if (outrosCheckbox.checked && outrosText.value.trim() === '') {
+                alert('Por favor, especifique o outro canal de comunicação.');
+                outrosText.focus();
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Form submission
+        const form = document.getElementById('pesquisaForm');
+        const formContainer = document.getElementById('formContainer');
+        const successMessage = document.getElementById('successMessage');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Validate checkbox group
+            if (!validateCheckboxGroup()) {
+                return;
+            }
+            
+            // Validate radio groups
+            const lojaChecked = document.querySelector('input[name="loja_preferida"]:checked');
+            if (!lojaChecked) {
+                alert('Por favor, selecione a loja onde você costuma comprar.');
+                return;
+            }
+            
+            // Show loading
+            loadingSpinner.style.display = 'block';
+            form.querySelector('.submit-button').disabled = true;
+            
+            // Collect form data
+            const formData = new FormData(form);
+            
+            // Simulate API call (replace with actual PHP endpoint)
+            try {
+                const response = await fetch('/api/salvar-pesquisa.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    // Show success message
+                    formContainer.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    
+                    // Reset form after 5 seconds
+                    setTimeout(() => {
+                        form.reset();
+                        // Clear all selections
+                        document.querySelectorAll('.selected').forEach(el => {
+                            el.classList.remove('selected');
+                        });
+                        document.querySelectorAll('.checked').forEach(el => {
+                            el.classList.remove('checked');
+                        });
+                        // Hide conditional fields
+                        document.getElementById('faltouGroup').style.display = 'none';
+                        document.getElementById('outrosCanaisGroup').style.display = 'none';
+                        
+                        formContainer.style.display = 'block';
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                }
+            } catch (error) {
+                console.error('Erro ao enviar pesquisa:', error);
+                alert('Ocorreu um erro ao enviar a pesquisa. Por favor, tente novamente.');
+            } finally {
+                loadingSpinner.style.display = 'none';
+                form.querySelector('.submit-button').disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

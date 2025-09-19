@@ -1,0 +1,14 @@
+{
+    "name": "tiaozinho/pesquisa-satisfacao",
+    "description": "Sistema de Pesquisa de Satisfação - Tiãozinho Supermercados",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "^6.8",
+        "tecnickcom/tcpdf": "^6.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
